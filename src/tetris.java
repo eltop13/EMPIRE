@@ -356,7 +356,9 @@ public class tetris extends JFrame implements KeyListener {
             e.printStackTrace();
         }
         int index=0;
-        for(int i=0;i<=topScores.size();i++) {
+        boolean haveNewHightScore=false;
+
+        for(int i=0;i< topScores.size();i++) {
             index=i+1;
             String line=topScores.get(i);
             String scoreString = "";
@@ -366,33 +368,38 @@ public class tetris extends JFrame implements KeyListener {
                 }
                 scoreString = line.charAt(j)+scoreString;
             }
+
             int score = Integer.parseInt(scoreString);
             if (currentScore >= score) {
                 topScores.remove(9);
                 topScores.add(index-1,"________ " + " ====> " + currentScore);
                 output += index + ". ________ " + " ====> " + currentScore + "\n";
+                haveNewHightScore=true;
                 break;
             } else {
 
                 output += index+line + "\n";
             }
         }
-        String name=JOptionPane.showInputDialog(output,"Enter your name, master, or type clearScores!");
-        if(name.equals("clearScores")){
-            topScores=restartScore;
-        }else {
-            topScores.set(index - 1, ". " + name + " ====> " + rowsclrd);
+        if(haveNewHightScore==true) {
+            String name = JOptionPane.showInputDialog(output, "Enter your name, master, or type clearScores!");
+            if (name.equals("clearScores")) {
+                topScores = restartScore;
+            } else {
+                topScores.set(index - 1, ". " + name + " ====> " + rowsclrd);
+            }
+            output = "";
+            int count = 1;
+            for (String score : topScores) {
+                output += count + score + "\n";
+                count++;
+            }
+            JOptionPane.showMessageDialog(temporaryLostComponent, output, "Top_10_Players", JOptionPane.WARNING_MESSAGE);
+            scoreBoard.save(topScores);
+            System.exit(0);
+        }else{
+            System.exit(0);
         }
-        output="";
-        int count=1;
-        for (String score : topScores) {
-            output+=count+score+"\n";
-            count++;
-        }
-        JOptionPane.showMessageDialog(temporaryLostComponent,output,"Top_10_Players",JOptionPane.WARNING_MESSAGE);
-        scoreBoard.save(topScores);
-        System.exit(0);
-
     }
 
     public void rotate(){
