@@ -302,7 +302,7 @@ package com.company;
         }
 
         public void blockgen(){
-            Component temporaryLostComponent = null;
+
             pos[0] = 0;
             pos[1] = 1;
             rand = (int) (Math.floor(Math.random()*7+1));
@@ -319,9 +319,79 @@ package com.company;
                 b[4+prof[pos[0]][3][rand-1].x][prof[pos[0]][3][rand-1].y].setBackground(rnd[rand-1]);
                 go();
             } else {
-                JOptionPane.showMessageDialog(temporaryLostComponent, "Game Over! You cleared "+rowsclrd+" rows, well done!");
-                System.exit(0);
+                score();
             }
+        }
+
+        public void score(){
+
+            Component temporaryLostComponent = null;
+            JOptionPane.showMessageDialog(temporaryLostComponent, "Game Over! You cleared "+rowsclrd+" rows, well done!");
+            String output="";
+            List<String> topScores=new ArrayList<>();
+            int currentScore=rowsclrd;
+            List<String>restartScore=new ArrayList<>();
+            restartScore.add(". unnamed" + " ====> 0");
+            restartScore.add(". unnamed" + " ====> 0");
+            restartScore.add(". unnamed" + " ====> 0");
+            restartScore.add(". unnamed" + " ====> 0");
+            restartScore.add(". unnamed" + " ====> 0");
+            restartScore.add(". unnamed" + " ====> 0");
+            restartScore.add(". unnamed" + " ====> 0");
+            restartScore.add(". unnamed" + " ====> 0");
+            restartScore.add(". unnamed" + " ====> 0");
+            restartScore.add(". unnamed" + " ====> 0");
+
+            try (
+                    BufferedReader bfr=
+                            new BufferedReader(
+                                    new FileReader("resources/topScores.txt"))){
+                String line="";
+                while((line=bfr.readLine())!=null) {
+                    topScores.add(line);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            int index=0;
+            for(int i=0;i<=topScores.size();i++) {
+                index=i+1;
+                String line=topScores.get(i);
+                String scoreString = "";
+                for (int j = line.length()-1; j >=0; j--) {
+                    if(line.charAt(j)==' '){
+                        break;
+                    }
+                    scoreString = line.charAt(j)+scoreString;
+                }
+                int score = Integer.parseInt(scoreString);
+                if (currentScore >= score) {
+                    topScores.remove(9);
+                    topScores.add(index-1,"________ " + " ====> " + currentScore);
+                    output += index + ". ________ " + " ====> " + currentScore + "\n";
+                    break;
+                } else {
+
+                    output += index+line + "\n";
+                }
+            }
+            String name=JOptionPane.showInputDialog(output,"Enter your name, master, or type clearScores!");
+            if(name.equals("clearScores")){
+                topScores=restartScore;
+            }else {
+                topScores.set(index - 1, ". " + name + " ====> " + rowsclrd);
+            }
+            output="";
+            int count=1;
+            for (String score : topScores) {
+                output+=count+score+"\n";
+                count++;
+            }
+            JOptionPane.showMessageDialog(temporaryLostComponent,output,"Top_10_Players",JOptionPane.WARNING_MESSAGE);
+            scoreBoard.save(topScores);
+            System.exit(0);
+
         }
 
         public void rotate(){
